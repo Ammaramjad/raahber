@@ -1,6 +1,6 @@
 """Utility helpers for TOPO-FER."""
 
-from .config import load_config, merge_configs
+from .config import load_config, merge_configs, parse_overrides
 from .logging import configure_logging
 from .metrics import classification_metrics, open_set_metrics
 from .seed import set_seed
@@ -10,6 +10,7 @@ __all__ = [
     "load_config",
     "merge_configs",
     "configure_logging",
+    "parse_overrides",
     "classification_metrics",
     "open_set_metrics",
     "set_seed",

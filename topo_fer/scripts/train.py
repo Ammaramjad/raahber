@@ -12,7 +12,7 @@ from lightning.pytorch.loggers import TensorBoardLogger
 
 from topo_fer.data.datamodule import FacialExpressionDataModule
 from topo_fer.training.module import TOPOFERLightningModule
-from topo_fer.utils.config import load_config, merge_configs
+from topo_fer.utils.config import load_config, merge_configs, parse_overrides
 from topo_fer.utils.logging import configure_logging
 
 
@@ -42,26 +42,6 @@ def parse_args() -> argparse.Namespace:
         help="Run topological discovery over unlabeled data after training.",
     )
     return parser.parse_args()
-
-
-def parse_overrides(overrides: list[str] | None) -> dict:
-    if not overrides:
-        return {}
-    result = {}
-    for override in overrides:
-        if "=" not in override:
-            raise ValueError(f"Invalid override '{override}'. Expected format KEY=VALUE.")
-        key, value = override.split("=", 1)
-        parts = key.split(".")
-        ref = result
-        for part in parts[:-1]:
-            ref = ref.setdefault(part, {})
-        try:
-            value_loaded = json.loads(value)
-        except json.JSONDecodeError:
-            value_loaded = value
-        ref[parts[-1]] = value_loaded
-    return result
 
 
 def main() -> None:
