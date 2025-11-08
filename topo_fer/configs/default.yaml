@@ -1,0 +1,98 @@
+experiment:
+  seed: 42
+  output_dir: outputs
+  log_every_n_steps: 50
+  checkpoint_every_n_epochs: 1
+  accelerator: gpu
+  devices: 1
+
+data:
+  batch_size: 32
+  num_workers: 8
+  image_size: 112
+  label_mapping:
+    neutral: 0
+    happiness: 1
+    surprise: 2
+    sadness: 3
+    anger: 4
+    disgust: 5
+    fear: 6
+  augmentations:
+    - random_resized_crop:
+        scale: [0.8, 1.0]
+        ratio: [0.75, 1.33]
+    - horizontal_flip: 0.5
+    - color_jitter:
+        brightness: 0.1
+        contrast: 0.1
+        saturation: 0.1
+        hue: 0.1
+  datasets:
+    - name: raf_db
+      root: data/RAF-DB
+      annotation: data/RAF-DB/labels/list_patition_label.txt
+      train_split: train
+      eval_split: test
+      unlabeled_split: unlabeled
+    - name: ferplus
+      root: data/FERPlus
+      annotation: data/FERPlus/labels/ferplus.csv
+      train_split: train
+      eval_split: val
+      unlabeled_split: unlabeled
+    - name: affectnet
+      root: data/AffectNet
+      annotation: data/AffectNet/labels/affectnet.csv
+      train_split: train
+      eval_split: val
+      unlabeled_split: unlabeled
+    - name: ov_merd
+      root: data/OV-MERD
+      annotation: data/OV-MERD/labels/ovmerd.csv
+      train_split: train
+      eval_split: val
+      unlabeled_split: unlabeled
+
+model:
+  backbone: resnet50
+  embedding_dim: 256
+  latent_dim: 16
+  ode:
+    hidden_dim: 128
+    num_layers: 2
+    atol: 1e-5
+    rtol: 1e-4
+    solver: dormand_prince
+    time_span: [0.0, 1.0]
+  manifold_regularization_weight: 0.1
+  topological_regularization_weight: 0.05
+  contrastive_temperature: 0.07
+
+discovery:
+  persistence_threshold: 0.2
+  max_dimension: 2
+  subsample_size: 2048
+  clustering: hdbscan
+  hdbscan:
+    min_cluster_size: 15
+    min_samples: 5
+    cluster_selection_epsilon: 0.0
+
+optimization:
+  optimizer: adamw
+  lr: 1e-4
+  weight_decay: 1e-2
+  warmup_steps: 500
+  max_epochs: 100
+  gradient_clip_val: 1.0
+  scheduler: cosine
+
+evaluation:
+  known_class_metrics: [accuracy, f1_macro, auc]
+  open_set_metrics: [auroc, aupr, fpr95]
+  visualization:
+    manifold_samples: 1024
+    persistence_diagram: true
+    mapper_graph: true
+
