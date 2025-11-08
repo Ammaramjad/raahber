@@ -1,0 +1,52 @@
+dataset:
+  name: raf-db
+  root: ./data/raf-db
+  split_ratio: 0.8
+  image_size: 224
+  augmentations:
+    - random_horizontal_flip
+    - color_jitter
+    - random_grayscale
+  known_class_ids: [0, 1, 2, 3, 4, 5, 6]
+  unlabeled_ratio: 0.4
+
+model:
+  backbone: resnet18
+  pretrained_backbone: true
+  feature_dim: 512
+  latent_dim: 128
+  ode_hidden_dim: 128
+  ode_num_layers: 2
+  ode_time_span: [0.0, 1.0]
+  manifold_projection_dim: 64
+  classifier_hidden_dim: 128
+  dropout: 0.2
+
+training:
+  batch_size: 64
+  num_workers: 8
+  max_epochs: 100
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  warmup_epochs: 5
+  known_classification_weight: 1.0
+  manifold_smoothness_weight: 0.5
+  contrastive_weight: 0.2
+  discovery_start_epoch: 10
+  checkpoint_interval: 5
+  gradient_clip_norm: 5.0
+  mixed_precision: true
+
+topology:
+  max_dimension: 2
+  homology_coefficient: 2
+  persistence_threshold: 0.1
+  rips_epsilon: null
+  min_cluster_size: 10
+  hdbscan_min_samples: 5
+  hdbscan_min_cluster_size: 15
+  topological_regularizer_weight: 1.0
+  reconstruction_weight: 0.1
+
+output_dir: ./outputs
+seed: 42
