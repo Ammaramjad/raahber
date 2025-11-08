@@ -35,6 +35,18 @@ To evaluate a checkpoint:
 python topo_fer/scripts/evaluate.py --config topo_fer/configs/default.yaml --checkpoint outputs/checkpoints/last.ckpt
 ```
 
+Programmatic evaluation is also supported:
+
+```python
+from topo_fer.evaluation import evaluate_model
+
+metrics = evaluate_model(
+    config="topo_fer/configs/default.yaml",
+    checkpoint="outputs/checkpoints/last.ckpt",
+)
+print(metrics)
+```
+
 ### Topological Artifacts
 
 Discovery artifacts (cluster assignments, persistence summaries, mapper graphs) land under `outputs/topology/<experiment_name>/`. Visualization helpers are provided in `topo_fer/utils/visualization.py`.
